@@ -8,6 +8,10 @@ import { Toaster } from "@/components/ui/sonner";
 export const metadata: Metadata = {
   title: "Agnes Portfolio",
   description: "Dynamic developer portfolio with a Supabase-backed admin CMS.",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
