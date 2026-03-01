@@ -50,7 +50,7 @@ export function AboutSection({ site }: AboutSectionProps) {
       </Reveal>
       <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
         <Reveal>
-          <p className="text-sm leading-relaxed text-slate-600 sm:text-base dark:text-slate-300">
+          <p className="text-sm leading-relaxed text-slate-600 sm:text-base dark:text-slate-300" style={{ textAlign: "justify" }}>
             {fragments.map((fragment, index) =>
               fragment.highlighted ? (
                 <span key={`${fragment.value}-${index}`} className="font-medium text-cyan-700 dark:text-cyan-300">
