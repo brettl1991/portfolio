@@ -15,13 +15,12 @@ function appendLineValue(current: string, next: string) {
 
 export function useProjectEditorState(project: ProjectEditorStateSource | null) {
   const [coverImageUrl, setCoverImageUrl] = useState(project?.cover_image_url ?? "")
-  const [thumbnailUrl, setThumbnailUrl] = useState(project?.thumbnail_url ?? project?.cover_image_url ?? "")
+  const [thumbnailUrl, setThumbnailUrl] = useState(project?.thumbnail_url ?? "")
   const [galleryImages, setGalleryImages] = useState((project?.gallery_images ?? []).join("\n"))
   const [published, setPublished] = useState(Boolean(project?.published))
 
   const selectCoverImage = (url: string) => {
     setCoverImageUrl(url)
-    setThumbnailUrl((current) => (current || url))
   }
 
   const selectThumbnailImage = (url: string) => {
