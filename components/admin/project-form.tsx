@@ -136,6 +136,12 @@ export function ProjectForm({ project, mediaAssets, action }: ProjectFormProps) 
                   onChange={(event) => setCoverImageUrl(event.target.value)}
                   placeholder="https://..."
                 />
+                <MediaPickerDialog
+                  assets={mediaAssets}
+                  onSelect={selectCoverImage}
+                  title="Pick cover image"
+                  triggerLabel="Pick Cover Image"
+                />
               </div>
 
               <div className="space-y-2">
@@ -147,15 +153,12 @@ export function ProjectForm({ project, mediaAssets, action }: ProjectFormProps) 
                   onChange={(event) => setThumbnailUrl(event.target.value)}
                   placeholder="https://..."
                 />
-              </div>
-
-              <div className="flex flex-wrap gap-2">
                 <MediaPickerDialog
                   assets={mediaAssets}
-                  onSelect={selectCoverImage}
-                  title="Pick cover image"
+                  onSelect={selectThumbnailImage}
+                  title="Pick thumbnail image"
+                  triggerLabel="Pick Thumbnail"
                 />
-                <MediaPickerDialog assets={mediaAssets} onSelect={selectThumbnailImage} title="Pick thumbnail image" />
               </div>
 
               <div className="space-y-2">
@@ -167,9 +170,13 @@ export function ProjectForm({ project, mediaAssets, action }: ProjectFormProps) 
                   onChange={(event) => setGalleryImages(event.target.value)}
                   rows={6}
                 />
+                <MediaPickerDialog
+                  assets={mediaAssets}
+                  onSelect={addGalleryImage}
+                  title="Add gallery image"
+                  triggerLabel="Add Gallery Images"
+                />
               </div>
-
-              <MediaPickerDialog assets={mediaAssets} onSelect={addGalleryImage} title="Add gallery image" />
             </CardContent>
           </Card>
 
