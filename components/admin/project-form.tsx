@@ -1,10 +1,14 @@
 "use client"
 
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { type MouseEvent, useEffect, useRef, useState } from "react"
 import { Save, Upload } from "lucide-react"
 
 import { MediaPickerDialog } from "@/components/admin/media-picker-dialog"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
@@ -41,6 +45,11 @@ interface ProjectFormProps {
 }
 
 export function ProjectForm({ project, mediaAssets, action }: ProjectFormProps) {
+  const router = useRouter()
+  const formRef = useRef<HTMLFormElement>(null)
+  const initialSnapshotRef = useRef("")
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false)
+
   const {
     coverImageUrl,
     setCoverImageUrl,
@@ -57,8 +66,35 @@ export function ProjectForm({ project, mediaAssets, action }: ProjectFormProps) 
 
   const statusLabel = published ? "Published" : "Draft"
 
+  useEffect(() => {
+    if (!formRef.current) {
+      return
+    }
+
+    initialSnapshotRef.current = serializeFormValues(formRef.current)
+  }, [])
+
+  const handleCancelClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (!formRef.current) {
+      return
+    }
+
+    const currentSnapshot = serializeFormValues(formRef.current)
+    const hasUnsavedChanges = currentSnapshot !== initialSnapshotRef.current
+
+    if (hasUnsavedChanges) {
+      event.preventDefault()
+      setCancelDialogOpen(true)
+    }
+  }
+
+  const handleDiscardChanges = () => {
+    setCancelDialogOpen(false)
+    router.push("/admin/projects")
+  }
+
   return (
-    <form action={action} className="space-y-6">
+    <form ref={formRef} action={action} className="space-y-6">
       <input type="hidden" name="id" value={project?.id ?? "new"} />
       <input type="hidden" name="published" value={published ? "true" : "false"} />
 
@@ -204,6 +240,11 @@ export function ProjectForm({ project, mediaAssets, action }: ProjectFormProps) 
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
+        <Button type="button" variant="ghost" className="rounded-md" asChild>
+          <Link href="/admin/projects" onClick={handleCancelClick}>
+            Cancel
+          </Link>
+        </Button>
         <Button type="submit" name="intent" value="save" className="rounded-md">
           <Save className="size-4" aria-hidden="true" />
           Save Draft
@@ -213,6 +254,33 @@ export function ProjectForm({ project, mediaAssets, action }: ProjectFormProps) 
           Save & Publish
         </Button>
       </div>
+
+      <Dialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Discard unsaved changes?</DialogTitle>
+            <DialogDescription>
+              Your edits on this project will be lost if you leave this page now.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setCancelDialogOpen(false)}>
+              Keep Editing
+            </Button>
+            <Button type="button" variant="destructive" onClick={handleDiscardChanges}>
+              Discard
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </form>
   )
+}
+
+function serializeFormValues(form: HTMLFormElement) {
+  const entries = Array.from(new FormData(form).entries()).map(([key, value]) => `${key}=${String(value)}`)
+
+  entries.sort()
+
+  return entries.join("&")
 }
